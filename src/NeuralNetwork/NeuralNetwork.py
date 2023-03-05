@@ -46,9 +46,9 @@ weight(2,1) //    \\
 
 # data-> list of data, expected_values -> expected neuron activation values
 class Data:
-    def __init__(self, data: list, expected_values: list):
+    def __init__(self, data: list, expected_neuron_values: list):
         self.input = data
-        self.expect = expected_values
+        self.expect = expected_neuron_values
 
 
 class NeuralNetwork:
@@ -69,9 +69,9 @@ class NeuralNetwork:
         self.inputs = []
         self.output = []
 
-    # Starts learning process for a single data
+    # Starts learning process for a single data point
 
-    def learn(self, data: Data,learnrate: float):
+    def learn(self, data: Data, learnrate: float):
         output_neurons = self.__layers[self.__number_of_layers-1].neurons_in_layer
 
         assert len(data.expect) == output_neurons, f"Invalid number of expected values: {len(data.expect)} : number of output neurons {output_neurons}"

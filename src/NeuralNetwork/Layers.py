@@ -1,6 +1,6 @@
 import Neuron
 
-# These are hidden layers, input neurons are just a list
+# These are hidden and output layers, input neurons are just a list
 class Layer:
     def __init__(self, number_of_neurons: int, input_connections: int) -> None:
         self.__neurons = []
