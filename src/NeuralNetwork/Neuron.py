@@ -61,7 +61,7 @@ class Neuron:
         self.activation()
         deltaCost = self.error(expected_value) - original_error
 
-        self.__gradient_bias = deltaCost * 10000
+        self.__gradient_bias = deltaCost * 10000 # same as delataCost / 0.0001
         self.__bias = save_bias
 
         for i in range(self.__connections):
@@ -78,16 +78,15 @@ class Neuron:
 
     def error(self, expected_value: float) -> float:
             error = expected_value - self.__activation
-            # print(f"ERROR: {error}: {expected_value} - {output_value}")
             error *= error
             return error
 
 if __name__ == "__main__":
     neuron = Neuron(2)
     neuron.input = [0.001, 0.2]
-    print(neuron)
     neuron.activation()
+    print(neuron)
     neuron.calculate_gradient(0.5)
     neuron.apply_gradient(2)
-    print(neuron)
     neuron.activation()
+    print(neuron)

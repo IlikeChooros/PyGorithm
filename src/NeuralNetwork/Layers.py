@@ -1,14 +1,14 @@
 import Neuron
 
-# These are hidden layers, input neurons are just list
+# These are hidden layers, input neurons are just a list
 class Layer:
     def __init__(self, number_of_neurons: int, input_connections: int) -> None:
         self.__neurons = []
         self.__outputs = []
 
         for loop in range(number_of_neurons):
-            self.__neurons.append(Neuron.Neuron(input_connections)) # Creating list of neurons in layer
-            self.__outputs.append(float(0)) # List of outputs of this layer
+            self.__neurons.append(Neuron.Neuron(input_connections)) # Creating a list of neurons in layer
+            self.__outputs.append(float(0)) # The list of outputs of this layer
 
         self.inputs = [] 
         self.neurons_in_layer = number_of_neurons
@@ -40,7 +40,7 @@ class Layer:
             neuron.apply_gradient(learn_rate)
 
     
-    # Calculates difference between single expected value and value producted by the network
+    # Calculates difference between single expected value and a value producted by the network
     def cost(self, expected_values: list) -> float:
         cost = float(0)
 
@@ -57,7 +57,7 @@ if __name__ == "__main__":
     layers.inputs = [3,2] 
     layers.calculate_output()
     print(layers)
-    print(layers.cost([1, 0, 0]))
+    print(f"Cost: {layers.cost([1, 0, 0])}")
 
     for i in range(10):
         layers.calculate_output()
@@ -65,4 +65,4 @@ if __name__ == "__main__":
         layers.apply_gradient(1.5)
     
     print(layers)
-    print(layers.cost([1, 0, 0]))
+    print(f"Cost: {layers.cost([1, 0, 0])}")
