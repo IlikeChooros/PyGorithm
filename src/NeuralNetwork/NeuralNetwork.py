@@ -50,9 +50,6 @@ class NeuralNetwork:
         self.__layers = []
         self.__layers += [Layers.Layer(neurons, inputs) for (neurons, inputs) in zip(hidden_layers, input_layers)]
 
-        for layer in self.__layers:
-            print(f"LAYER: {layer.input_conn}  {layer.neurons_in_layer}")
-
         self.__output_layer = self.__layers[self.__number_of_layers-1]
 
         self.inputs = []
@@ -102,8 +99,7 @@ class NeuralNetwork:
 
     
     def classify(self):
-        max_value = max(self.output)
-        return self.output.index(max_value) + 1
+        return self.output.index(max(self.output)) + 1
     
     def __str__(self):
         ret = "\n"
