@@ -60,11 +60,13 @@ class Neuron:
             self.__gradient_weights[i] = self.__output_const * self.input[i]
         
         return self.__output_const
+    
 
     def apply_gradient(self, learn_rate: float) -> None:
-        self.__bias -= self.__gradient_bias * learn_rate
+        self.__bias += self.__gradient_bias * learn_rate
         for i in range(self.__connections):
             self.weights[i] += self.__gradient_weights[i] * learn_rate
+
     
     # Using backpropagation
     def calculate_gradient(self, node_value):
@@ -99,14 +101,3 @@ if __name__ == "__main__":
     neuron.activation()
     print(neuron)
     print(neuron.error(1))
-    print("")
-    x, y = 5, 10
-    l = [x, y]
-
-    print(l[:])
-    x = 6
-    y = 124
-    l [0] = x
-    x = 123
-    print(l[:])
-

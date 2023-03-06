@@ -26,21 +26,7 @@ Neurons:
     As output -> float number (0 ; 1)
 
     Every input connection has its unique weight, but all connections to the
-    same neuron have the same bias
-
-    input1
-      \\   \\
-       \\    \\  weight (1,1)
-        \\     \\
-weight(1,2)\\     \\
-            \\     neuron1 Activation( input[a] * weight[a] + bias1 )
-              \\ //
-              //\\
-weight(2,1) //    \\
-          //        \\
-    input2 ========= neuron2 Activation( input[a] * weight[a] + bias2 )
-            weight(2,2)  
-
+    same neuron share the same bias
 
 """ 
 
@@ -64,6 +50,9 @@ class NeuralNetwork:
         self.__layers = []
         self.__layers += [Layers.Layer(neurons, inputs) for (neurons, inputs) in zip(hidden_layers, input_layers)]
 
+        for layer in self.__layers:
+            print(f"LAYER: {layer.input_conn}  {layer.neurons_in_layer}")
+
         self.__output_layer = self.__layers[self.__number_of_layers-1]
 
         self.inputs = []
@@ -82,7 +71,7 @@ class NeuralNetwork:
         prev_layer = self.__output_layer.calculate_output_gradient(data.expect)
         output_values = self.__output_layer.output_values
 
-        for reverse in range(output_neurons-2, -1, -1):
+        for reverse in range(self.__number_of_layers-2, -1, -1):
             prev_layer = self.__layers[reverse].calculate_gradient(prev_layer, output_values)
             output_values = prev_layer.output_values
 
@@ -114,7 +103,6 @@ class NeuralNetwork:
     
     def classify(self):
         max_value = max(self.output)
-        print(self.output[:])
         return self.output.index(max_value) + 1
     
     def __str__(self):
@@ -128,11 +116,15 @@ class NeuralNetwork:
         return ret
 
 if __name__ == "__main__":
-    network = NeuralNetwork([2,3,2])
+    network = NeuralNetwork([2,10,3,2])
     network.learn(Data([4,3], [1,0]), 1.5)
     print(network)
     print(f"Cost {network.cost(Data([4,3], [1,0]))}")
     print(f"AI PICK: {network.classify()}")
+    network.learn(Data([4,3], [1,0]), 1.5)
+    network.learn(Data([4,3], [1,0]), 1.5)
+    network.learn(Data([4,3], [1,0]), 1.5)
+    network.learn(Data([4,3], [1,0]), 1.5)
     network.learn(Data([4,3], [1,0]), 1.5)
     network.learn(Data([4,3], [1,0]), 1.5)
     network.learn(Data([4,3], [1,0]), 1.5)

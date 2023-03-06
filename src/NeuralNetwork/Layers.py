@@ -14,6 +14,7 @@ class Layer:
 
         self.inputs = [] 
         self.neurons_in_layer = number_of_neurons
+        self.input_conn = input_connections
         
     def get_weight(self, neuron_idx, idx):
         return self.__neurons[neuron_idx].weights[idx]
@@ -41,7 +42,7 @@ class Layer:
         
         for i in range(self.neurons_in_layer):
             node_value = float(0)
-
+            
             for neuron in range(prev_layer.neurons_in_layer):
                 node_value += prev_layer.get_weight(neuron, i) * output_values[neuron]
 
@@ -70,7 +71,6 @@ class Layer:
         
         return cost
             
-
 
 if __name__ == "__main__":
     print("\n")
