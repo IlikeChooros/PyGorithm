@@ -5,20 +5,27 @@ class Layer:
     def __init__(self, number_of_neurons: int, input_connections: int) -> None:
         self.__neurons = []
         self.__outputs = []
+        self.output_values = []
 
         for loop in range(number_of_neurons):
             self.__neurons.append(Neuron.Neuron(input_connections)) # Creating a list of neurons in layer
             self.__outputs.append(float(0)) # The list of outputs of this layer
+            self.output_values.append(float(0))
 
         self.inputs = [] 
         self.neurons_in_layer = number_of_neurons
         
+    def get_weight(self, neuron_idx, idx):
+        return self.__neurons[neuron_idx].weights[idx]
 
     def __str__(self) -> str:
         ret = "\n"
+        itr = 1
         for neuron in self.__neurons:
+            ret += f"Neuron {itr}\n"
             ret += str(neuron)
             ret += "\n"
+            itr += 1
         return ret
     
     # Calculates and returns output values as a list, input values should be already set
@@ -30,12 +37,26 @@ class Layer:
         return self.__outputs  
     
     
-    def calculate_gradient(self, expected_values: list) -> None:
+    def calculate_gradient(self, prev_layer, output_values: list):
+        
         for i in range(self.neurons_in_layer):
-            self.__neurons[i].calculate_gradient(expected_values[i])
+            node_value = float(0)
 
+            for neuron in range(prev_layer.neurons_in_layer):
+                node_value += prev_layer.get_weight(neuron, i) * output_values[neuron]
+
+            self.output_values[i] = self.__neurons[i].calculate_gradient(node_value)
+
+        return self
+
+
+    def calculate_output_gradient(self, expected_values: list):
+        for i in range(self.neurons_in_layer):
+            self.output_values[i] = self.__neurons[i].calculate_output_gradient(expected_values[i])
+        
+        return self
     
-    def apply_gradient(self, learn_rate: float) -> None:
+    def apply_gradient(self, learn_rate: float):
         for neuron in self.__neurons:
             neuron.apply_gradient(learn_rate)
 
@@ -61,8 +82,7 @@ if __name__ == "__main__":
 
     for i in range(10):
         layers.calculate_output()
-        layers.calculate_gradient([1, 0, 0])
-        layers.apply_gradient(1.5)
+        layers.calculate_output_gradient([1, 0, 0]).apply_gradient(1)
     
     print(layers)
     print(f"Cost: {layers.cost([1, 0, 0])}")

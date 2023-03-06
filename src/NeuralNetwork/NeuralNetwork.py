@@ -78,9 +78,19 @@ class NeuralNetwork:
 
         self.inputs = data.input
         self.network_output()
-        self.__output_layer.calculate_gradient(data.expect)
-        self.__output_layer.apply_gradient(learnrate)
-    
+
+        prev_layer = self.__output_layer.calculate_output_gradient(data.expect)
+        output_values = self.__output_layer.output_values
+
+        for reverse in range(output_neurons-2, -1, -1):
+            prev_layer = self.__layers[reverse].calculate_gradient(prev_layer, output_values)
+            output_values = prev_layer.output_values
+
+        for layer in self.__layers:
+            layer.apply_gradient(learnrate)
+
+    def cost(self, data: Data):
+        return self.__output_layer.cost(data.expect)
 
     # Calculates average difference between ALL expected values and values producted by the network
     def loss(self, expected_outputs: list) -> float:
@@ -100,9 +110,12 @@ class NeuralNetwork:
             temp = layers.calculate_output()
 
         self.output = temp
+
     
     def classify(self):
-        return max(self.output)
+        max_value = max(self.output)
+        print(self.output[:])
+        return self.output.index(max_value) + 1
     
     def __str__(self):
         ret = "\n"
@@ -112,18 +125,18 @@ class NeuralNetwork:
             ret += f"Layer {itr}:"
             ret += str(layer)
             itr += 1
-            
         return ret
 
 if __name__ == "__main__":
     network = NeuralNetwork([2,3,2])
     network.learn(Data([4,3], [1,0]), 1.5)
     print(network)
+    print(f"Cost {network.cost(Data([4,3], [1,0]))}")
+    print(f"AI PICK: {network.classify()}")
     network.learn(Data([4,3], [1,0]), 1.5)
     network.learn(Data([4,3], [1,0]), 1.5)
     network.learn(Data([4,3], [1,0]), 1.5)
-
     print(network)
+    print(f"Cost {network.cost(Data([4,3], [1,0]))}")
+    print(f"AI PICK: {network.classify()}")
 
-
-    

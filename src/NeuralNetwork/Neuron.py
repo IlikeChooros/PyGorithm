@@ -1,18 +1,14 @@
 import random
 import math
 
-random.seed()
-
-
-
 class Neuron:
     def __init__(self, input_connections: int):
         
-        self.__weights = []
+        self.weights = []
 
         # values between (-1,1)
         self.__bias = 1 - 2*random.random()
-        self.__weights += [1 - 2*random.random() for i in range(input_connections)]
+        self.weights += [1 - 2*random.random() for i in range(input_connections)]
 
         self.__gradient_bias = float(0)
         self.__gradient_weights = [float(0) for i in range(input_connections)]
@@ -20,13 +16,16 @@ class Neuron:
         self.__connections = input_connections
         self.__activation = float(0)
 
+        # partial dirivative: d(cost)/d(activation) * d(activation)/d(ouput)
+        self.__output_const = float(0)
+
         self.input = []
 
     
     def __str__(self) -> str:
         ret = f"Bias: {self.__bias}\n"
         for i in range(self.__connections):
-            ret += f"   {i}. Weight: {self.__weights[i]} \n"
+            ret += f"   {i}. Weight: {self.weights[i]} \n"
 
         ret += f"Act: {self.__activation}\n"
         return ret
@@ -35,45 +34,52 @@ class Neuron:
     def activation(self) -> float: 
         output = float(0)
         for i in range(self.__connections):
-            output += self.__weights[i] * self.input[i] + self.__bias
+            output += self.weights[i] * self.input[i] + self.__bias
 
         # Using sigmoid function 1 / (e^-x + 1)
         self.__activation = 1 / (math.exp(-output) + 1)
 
         return self.__activation
     
+    # Use after activation
+    def calculate_output_gradient(self, expected_value: float) -> float:
+        # dc/dw = dc/dA * dA/d(output) * d(output)/dw
+
+        # dc/dA = d (Expected_value - Activation)^2 / d(Activation)
+        #       = 2 * (Expected_value - Activation)
+
+        # dA/d(output) = d( 1 / e^(-output) + 1)/d(output) = A(1 - A)
+
+        # d(output)/dw = d(w*input + bias)/dw = input
+
+        # Final answer dc/dw = 2 * (Exp - Act) * Act (1 - Act) * input
+
+        self.__output_const = 2 * (expected_value - self.__activation) * self.__activation * (1 - self.__activation)
+
+        for i in range(self.__connections):
+            self.__gradient_weights[i] = self.__output_const * self.input[i]
+        
+        return self.__output_const
 
     def apply_gradient(self, learn_rate: float) -> None:
         self.__bias -= self.__gradient_bias * learn_rate
         for i in range(self.__connections):
-            self.__weights[i] -= self.__gradient_weights[i] * learn_rate
-
+            self.weights[i] += self.__gradient_weights[i] * learn_rate
     
-    # Should be optimized, using CALCULUS
-    def calculate_gradient(self, expected_value: float) -> None:
+    # Using backpropagation
+    def calculate_gradient(self, node_value):
 
-        save_weight = float(0)
-        save_bias = self.__bias
+        # For hidden layers
+        # dc/dw(i) = output_const * Sum(w(i+1) * output_value(i+1)) * Ai * (1 - Ai) * input 
+        # dc/db(i) = output_const * Sum(w(i+1) * output_value(i+1)) * Ai * (1- Ai)
+        self.__output_const = self.__activation * (1 - self.__activation)
 
-        original_error = self.error(expected_value)
-
-        self.__bias += 0.0001
-        self.activation()
-        deltaCost = self.error(expected_value) - original_error
-
-        self.__gradient_bias = deltaCost * 10000 # same as delataCost / 0.0001
-        self.__bias = save_bias
+        self.__gradient_bias = node_value * self.__output_const
 
         for i in range(self.__connections):
-            original_error = self.error(expected_value)
-            save_weight = self.__weights[i]
-
-            self.__weights[i] += 0.0001
-            self.activation()
-            deltaCost = self.error(expected_value) - original_error
-
-            self.__gradient_weights[i] = deltaCost * 10000
-            self.__weights[i] = save_weight
+            self.__gradient_weights[i] = node_value * self.__output_const * self.input[i]
+        
+        return self.__output_const
 
 
     def error(self, expected_value: float) -> float:
@@ -83,10 +89,24 @@ class Neuron:
 
 if __name__ == "__main__":
     neuron = Neuron(2)
-    neuron.input = [0.001, 0.2]
+    neuron.input = [0.5, 0.8]
     neuron.activation()
     print(neuron)
-    neuron.calculate_gradient(0.5)
-    neuron.apply_gradient(2)
+    print(neuron.error(1))
+    print("")
+    neuron.calculate_output_gradient(1)
+    neuron.apply_gradient(1)
     neuron.activation()
     print(neuron)
+    print(neuron.error(1))
+    print("")
+    x, y = 5, 10
+    l = [x, y]
+
+    print(l[:])
+    x = 6
+    y = 124
+    l [0] = x
+    x = 123
+    print(l[:])
+
