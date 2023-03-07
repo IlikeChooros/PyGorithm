@@ -1,6 +1,6 @@
 import pygame as pg,sys,math,random,os
 from pygame.locals import *
-
+from src import Tester
 
 klik = pg.key.get_pressed
 

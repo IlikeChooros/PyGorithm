@@ -1,4 +1,6 @@
-import Layers
+from .network import Layer
+
+
 """
 Neural network stucture:
 
@@ -35,7 +37,7 @@ class Data:
     def __init__(self, data: list, expected_neuron_values: list):
         self.input = data
         self.expect = expected_neuron_values
-
+    
 
 class NeuralNetwork:
 
@@ -48,7 +50,7 @@ class NeuralNetwork:
         input_layers = neurons_in_layers[:-1]
 
         self.__layers = []
-        self.__layers += [Layers.Layer(neurons, inputs) for (neurons, inputs) in zip(hidden_layers, input_layers)]
+        self.__layers += [Layer(neurons, inputs) for (neurons, inputs) in zip(hidden_layers, input_layers)]
 
         self.__output_layer = self.__layers[self.__number_of_layers-1]
 

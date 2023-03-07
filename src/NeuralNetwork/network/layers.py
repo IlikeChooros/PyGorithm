@@ -1,4 +1,4 @@
-import Neuron
+from .neuron import Neuron
 
 # These are hidden and output layers, input neurons are just a list
 class Layer:
@@ -8,7 +8,7 @@ class Layer:
         self.output_values = []
 
         for loop in range(number_of_neurons):
-            self.__neurons.append(Neuron.Neuron(input_connections)) # Creating a list of neurons in layer
+            self.__neurons.append(Neuron(input_connections)) # Creating a list of neurons in layer
             self.__outputs.append(float(0)) # The list of outputs of this layer
             self.output_values.append(float(0))
 
