@@ -1,46 +1,34 @@
 import pygame as pg,sys,math,random,os
 from pygame.locals import *
-#Skroty
+from src import Tester
+
 klik = pg.key.get_pressed
-#Pygame_Init
+
 pg.init()
-#Okno Programu +
-OKNO = [750,800]#960x540
+
+OKNO = [750,800]
 screen = pg.display.set_mode(OKNO)
 pg.display.set_caption("PyGorythm")
-#pg.display.set_icon(pg.image.load(""))
 
 #Pygame Clock
 clock = pg.time.Clock()
 #Mouse
 M_LEWY = False
 M_PRAWY = False
-NP = True#Nacisniecie/Puszczenie-mozna nacisknac
+NP = True #Nacisniecie/Puszczenie-mozna nacisknac
 offset = [0,0]#Mouse wheel ratation
 #Other Inputs
 P_ESCAPE = False
 NP_ESCAPE = True#False - music puscic aby jeszcze raz nacisnac
 
-#Colors
-colorSTART = (0,0,0)
 colorSUBTITLES = (255, 255, 255)
 #Background pygame color
-background_color = colorSTART
-#GFX
-#SND
-#Fonts
-font = pg.font.SysFont("cambria",30)#wielkosc 70
-#Napisy
-#Variables
+background_color = (0,0,0)
 
-#Def-s
-#Classes
-
-
+font = pg.font.SysFont("cambria",30)
 
 
 while True:
-    # Okno Programu
     Mx, My = pg.mouse.get_pos()
     for event in pg.event.get():
         if event.type == pg.QUIT or klik()[pg.K_F4]:
@@ -68,15 +56,10 @@ while True:
         if event.type == pg.KEYUP:
             if event.key == K_ESCAPE:
                 P_ESCAPE = False
-    # ------------KOD------------- #
 
-    # ------------TLO------------- #
     screen.fill(background_color)
-    # ----------GRAFIKI----------- #
     
     screen.blit(font.render(f"", True, (255,255,255)), (40,40))
-    # ---------------|Aktualizacja+|---------------- #
     print()
-    #print()
     pg.display.update()
     clock.tick(120)
