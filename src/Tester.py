@@ -1,4 +1,4 @@
-import random, os
+import random
 
 from data_converter import DataConverter
 from NeuralNetwork import NeuralNetwork
@@ -14,9 +14,8 @@ def progress_bar(idx, total):
     done_str = '█'*int(done)
     togo_str = '░'*int(togo)
 
-    print(f'Progress: {done_str}{togo_str} {round((idx+1)/total*100)}% ', end='\r')
-
-
+    print(f'\t\t\tProgress: {done_str}{togo_str} {round((idx+1)/total*100, 2)}% ', end='\r')
+    
 
 
 
@@ -34,16 +33,18 @@ class Tester:
         for i in range(repeat):
             for data in self.learn_batch:
                 itr += 1
+
+                self.__network.learn(data)
+                print(f"Average Loss: {round(self.__network.loss(itr), 5)}   ", end='\r')
+
                 if itr % repeat == 0:
                     progress_bar(itr, max_batch)
                     self.__network.apply(1.3, repeat)
-                self.__network.learn(data)
+                
+                
+
             
-
-    
-    def check(self):
-
-        os.system('cls')
+    def print_input(self):
 
         x = float(input("Set x: "))
         y = float(input("Set y: "))
@@ -52,7 +53,7 @@ class Tester:
 
         self.__network.network_output()
         
-        print("Network: "+str(self.__network.output[:]) + " X < Y  (1 0)")
+        print(f"Network: {(self.__network.output[:])}")
 
         match self.__network.classify():
             case 1:
@@ -60,28 +61,20 @@ class Tester:
             case 2:
                 print("X > Y")
 
+    
+    def check(self):
 
+        print("\n")
+
+        self.print_input()
     
         while True:
-            x = float(input("Set x: "))
-            y = float(input("Set y: "))
-
-            self.__network.inputs = [x, y]
-
-            self.__network.network_output()
-
-            print("Network: "+str(self.__network.output[:]))
-
-            match self.__network.classify():
-                case 1:
-                    print("X < Y")
-                case 2:
-                    print("X > Y")
+            self.print_input()
 
 
     
 
-    # Creates test, by making random 100 points, setting output values via comparsion_function (lambda)
+    # Creates test, by making random points, setting output values via comparsion function (lambda)
     # Network should have 2 inputs and 2 outputs
     def create_point_test(self, path: str, comparsion_function):
         x, y = 0.0, 0.0
@@ -110,9 +103,9 @@ if __name__ == "__main__":
 
     data = DataConverter()
     
-    tester = Tester(NeuralNetwork([2,50,5,2]))
-    tester.create_point_test("src/tests/triangle.txt", lambda x,y: x < y)
-    tester.learn_batch = data.list_to_Data(data.prepare_data_txt("src/tests/triangle.txt"), 2, 2)
+    tester = Tester(NeuralNetwork([2,50,50,2]))
+    tester.create_point_test("src/tests/x_smaller_than_y.txt", lambda x,y: x < y)
+    tester.learn_batch = data.list_to_Data(data.prepare_data_txt("src/tests/x_smaller_than_y.txt"), 2, 2)
     tester.teach()
     tester.check()
     
