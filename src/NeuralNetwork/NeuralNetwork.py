@@ -59,7 +59,7 @@ class NeuralNetwork:
 
     # Starts learning process for a single data point
 
-    def learn(self, data: Data, learnrate: float):
+    def learn(self, data: Data):
         output_neurons = self.__layers[self.__number_of_layers-1].neurons_in_layer
 
         assert len(data.expect) == output_neurons, f"Invalid number of expected values: {len(data.expect)} : number of output neurons {output_neurons}"
@@ -74,8 +74,9 @@ class NeuralNetwork:
             prev_layer = self.__layers[reverse].calculate_gradient(prev_layer, output_values)
             output_values = prev_layer.output_values
 
+    def apply(self, learnrate: float, batch_size: int):
         for layer in self.__layers:
-            layer.apply_gradient(learnrate)
+            layer.apply_gradient(learnrate, batch_size)
 
     def cost(self, data: Data):
         return self.__output_layer.cost(data.expect)

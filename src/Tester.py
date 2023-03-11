@@ -1,5 +1,6 @@
-import random, data_converter
+import random
 
+from data_converter import DataConverter
 from NeuralNetwork import NeuralNetwork
 
 
@@ -11,9 +12,14 @@ class Tester:
     
     def teach(self):
         
-        for i in range(10):
-            for data in self.learn_batch:
-                self.__network.learn(data, 1)
+        itr = 0
+        for data in self.learn_batch:
+            itr += 1
+            if itr == 50:
+                self.__network.apply(1.3, itr)
+                itr = 1
+            self.__network.learn(data)
+            
 
     
     def check(self):
@@ -25,6 +31,12 @@ class Tester:
         self.__network.inputs = [x, y]
         print("Network: "+str(self.__network.output[:]) + " X < Y  (1 0)")
 
+        match self.__network.classify():
+            case 1:
+                print("X < Y")
+            case 2:
+                print("X > Y")
+
 
     
         while True:
@@ -34,6 +46,12 @@ class Tester:
 
             self.__network.inputs = [x, y]
             print("Network: "+str(self.__network.output[:]))
+
+            match self.__network.classify():
+                case 1:
+                    print("X < Y")
+                case 2:
+                    print("X > Y")
 
 
     
@@ -66,9 +84,9 @@ class Tester:
 
 if __name__ == "__main__":
 
-    data = data_converter.DataConverter()
+    data = DataConverter()
     
-    tester = Tester(NeuralNetwork([2,100,2]))
+    tester = Tester(NeuralNetwork([2,5,5,2]))
     tester.create_point_test("src/tests/triangle.txt", lambda x,y: x < y)
     tester.learn_batch = data.list_to_Data(data.prepare_data_txt("src/tests/triangle.txt"), 2, 2)
     tester.teach()

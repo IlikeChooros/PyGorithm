@@ -57,9 +57,9 @@ class Layer:
         
         return self
     
-    def apply_gradient(self, learn_rate: float):
+    def apply_gradient(self, learn_rate: float, batch_size: int):
         for neuron in self.__neurons:
-            neuron.apply_gradient(learn_rate)
+            neuron.apply_gradient(learn_rate, batch_size)
 
     
     # Calculates difference between single expected value and a value producted by the network
