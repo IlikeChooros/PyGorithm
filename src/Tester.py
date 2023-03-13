@@ -129,13 +129,13 @@ if __name__ == "__main__":
     data = DataConverter()
     
     tester = Tester(NeuralNetwork([2,15,15,2]))
-    tester.load_network("src/net.txt")
+    tester.load_network("src/saved_networks/net.txt")
 
     comparsion_func = lambda x,y: (x-2.5)*(x-2.5) < 1 - (y-2.5)*(y-2.5)
 
     tester.create_point_test("src/tests/point_test.txt", comparsion_func)
     tester.learn_batch = data.list_to_Data(data.prepare_data_txt("src/tests/point_test.txt"), 2, 2)
     tester.teach()
-    tester.save_network("src/net.txt")
+    tester.save_network("src/saved_networks/net.txt")
     tester.check(comparsion_func) 
     
