@@ -3,12 +3,12 @@ from .neuron import Neuron
 # These are hidden and output layers, input neurons are just a list
 class Layer:
     def __init__(self, number_of_neurons: int, input_connections: int) -> None:
-        self.__neurons = []
+        self.neurons = []
         self.__outputs = []
         self.output_values = []
 
         for loop in range(number_of_neurons):
-            self.__neurons.append(Neuron(input_connections)) # Creating a list of neurons in layer
+            self.neurons.append(Neuron(input_connections)) # Creating a list of neurons in layer
             self.__outputs.append(float(0)) # The list of outputs of this layer
             self.output_values.append(float(0))
 
@@ -17,12 +17,15 @@ class Layer:
         self.input_conn = input_connections
         
     def get_weight(self, neuron_idx, idx):
-        return self.__neurons[neuron_idx].weights[idx]
+        return self.neurons[neuron_idx].weights[idx]
+    
+    def get_bias(self, neuron_idx):
+        return self.neurons[neuron_idx].bias
 
     def __str__(self) -> str:
         ret = "\n"
         itr = 1
-        for neuron in self.__neurons:
+        for neuron in self.neurons:
             ret += f"Neuron {itr}\n"
             ret += str(neuron)
             ret += "\n"
@@ -32,8 +35,8 @@ class Layer:
     # Calculates and returns output values as a list, input values should be already set
     def calculate_output(self) -> list:
         for i in range(self.neurons_in_layer):
-            self.__neurons[i].input = self.inputs
-            self.__outputs[i] = self.__neurons[i].activation()
+            self.neurons[i].input = self.inputs
+            self.__outputs[i] = self.neurons[i].activation()
 
         return self.__outputs  
     
@@ -46,19 +49,19 @@ class Layer:
             for neuron in range(prev_layer.neurons_in_layer):
                 node_value += prev_layer.get_weight(neuron, i) * output_values[neuron]
 
-            self.output_values[i] = self.__neurons[i].calculate_gradient(node_value)
+            self.output_values[i] = self.neurons[i].calculate_gradient(node_value)
 
         return self
 
 
     def calculate_output_gradient(self, expected_values: list):
         for i in range(self.neurons_in_layer):
-            self.output_values[i] = self.__neurons[i].calculate_output_gradient(expected_values[i])
+            self.output_values[i] = self.neurons[i].calculate_output_gradient(expected_values[i])
         
         return self
     
     def apply_gradient(self, learn_rate: float, batch_size: int):
-        for neuron in self.__neurons:
+        for neuron in self.neurons:
             neuron.apply_gradient(learn_rate, batch_size)
 
     
@@ -67,7 +70,7 @@ class Layer:
         cost = float(0)
 
         for itr in range(self.neurons_in_layer):
-            cost += self.__neurons[itr].error(expected_values[itr])
+            cost += self.neurons[itr].error(expected_values[itr])
         
         return cost
             

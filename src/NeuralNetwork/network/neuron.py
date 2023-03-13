@@ -8,7 +8,7 @@ class Neuron:
         self.__gradient_weights = []
 
         # values between (-1,1)
-        self.__bias = 1 - 2*random.random()
+        self.bias = 1 - 2*random.random()
 
         for i in range(input_connections):
 
@@ -27,7 +27,7 @@ class Neuron:
 
     
     def __str__(self) -> str:
-        ret = f"Bias: {self.__bias}\n"
+        ret = f"Bias: {self.bias}\n"
         for i in range(self.__connections):
             ret += f"   {i}. Weight: {self.weights[i]} \n"
 
@@ -40,7 +40,7 @@ class Neuron:
         for i in range(self.__connections):
             output += self.weights[i] * self.input[i] 
         
-        output += + self.__bias
+        output += + self.bias
 
         # Using sigmoid function 1 / (e^-x + 1)
         self.__activation = 1 / (math.exp(-output) + 1)
@@ -72,7 +72,7 @@ class Neuron:
 
     def apply_gradient(self, learn_rate: float, batch_size: int) -> None:
 
-        self.__bias += self.__gradient_bias / batch_size * learn_rate
+        self.bias += self.__gradient_bias / batch_size * learn_rate
 
         self.__gradient_bias = 0.0
 

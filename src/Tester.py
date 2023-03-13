@@ -55,14 +55,10 @@ class Tester:
             
             print(f"Network: {(self.__network.output[:])} should be {compare(x,y)}")
 
-            match self.__network.classify():
-                case 1:
-                    print("X < Y")
-                case 2:
-                    print("X > Y")
         except KeyboardInterrupt:
             print("\nExiting the program...")
             os._exit(0)
+
 
     
     def check(self, comparsion_func):
@@ -75,7 +71,13 @@ class Tester:
             self.print_input(comparsion_func)
 
 
+    def save_network(self, path):
+        self.__network.save_to_txt(path)
     
+
+    def load_network(self, path):
+        self.__network.load_from_txt(path)
+
 
     # Creates test, by making random points, setting output values via comparsion function (lambda)
     # Network should have 2 inputs and 2 outputs
@@ -126,12 +128,14 @@ if __name__ == "__main__":
 
     data = DataConverter()
     
-    tester = Tester(NeuralNetwork([2,15,10,2]))
+    tester = Tester(NeuralNetwork([2,15,15,2]))
+    tester.load_network("src/net.txt")
 
-    comparsion_func = lambda x,y: y > x
+    comparsion_func = lambda x,y: (x-2.5)*(x-2.5) < 1 - (y-2.5)*(y-2.5)
 
     tester.create_point_test("src/tests/point_test.txt", comparsion_func)
     tester.learn_batch = data.list_to_Data(data.prepare_data_txt("src/tests/point_test.txt"), 2, 2)
     tester.teach()
-    tester.check(comparsion_func)
+    tester.save_network("src/net.txt")
+    tester.check(comparsion_func) 
     

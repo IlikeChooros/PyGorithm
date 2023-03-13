@@ -49,6 +49,8 @@ class NeuralNetwork:
         hidden_layers = neurons_in_layers[1:]
         input_layers = neurons_in_layers[:-1]
 
+        self.__neural_net_sturct = neurons_in_layers
+
         self.__layers = []
         self.__layers += [Layer(neurons, inputs) for (neurons, inputs) in zip(hidden_layers, input_layers)]
 
@@ -116,20 +118,62 @@ class NeuralNetwork:
             itr += 1
         return ret
 
+    # Saving it in format:
+    #  Network sturcture 
+    #  (Neuron1): Bias " " Weight1 " " Weight2 " " ... + \n
+    #  ...
+    def save_to_txt(self, path: str):
+
+        with open(path, 'w') as file:
+
+            for numbers in self.__neural_net_sturct:
+                file.write(str(numbers)+ " ")
+            
+            file.write("\n")
+
+            weight = float(0)
+            bias = float(0)
+
+            for layer in range(self.__number_of_layers):
+                for neuron in range(self.__layers[layer].neurons_in_layer):
+
+                    bias = self.__layers[layer].get_bias(neuron)
+
+                    file.write(str(bias))
+
+                    for connection in range(self.__neural_net_sturct[layer]):
+                        weight = self.__layers[layer].get_weight(neuron, connection)
+                        file.write(" "+str(weight))
+
+                    file.write("\n")
+    
+
+    def load_from_txt(self, path: str):
+        f = open(path,"r")
+        data = f.readlines()
+        f.close()
+        network = []
+        for i in range(len(data)):
+            network.append(data[i].split())
+        for i in range(len(network)):
+            for j in range(len(network[i])):
+                network[i][j] = float(network[i][j])
+
+        idx = 0
+
+        for layer in range(self.__number_of_layers):
+            for neuron_idx in range(int(network[0][layer+1])):
+                idx +=1
+                self.__layers[layer].neurons[neuron_idx].bias = network[idx][0]
+
+                for connection in range(int(network[0][layer])):
+                    self.__layers[layer].neurons[neuron_idx].weights[connection] = network[idx][connection+1]
+
+        
+        
+
+
 if __name__ == "__main__":
     network = NeuralNetwork([2,10,3,2])
-    network.learn(Data([4,3], [1,0]), 1.5)
-    print(network)
-    print(f"Cost {network.cost([1,0])}")
-    print(f"AI PICK: {network.classify()}")
-    network.learn(Data([4,3], [1,0]), 1.5)
-    network.learn(Data([4,3], [1,0]), 1.5)
-    network.learn(Data([4,3], [1,0]), 1.5)
-    network.learn(Data([4,3], [1,0]), 1.5)
-    network.learn(Data([4,3], [1,0]), 1.5)
-    network.learn(Data([4,3], [1,0]), 1.5)
-    network.learn(Data([4,3], [1,0]), 1.5)
-    print(network)
-    print(f"Cost {network.cost([1,0])}")
-    print(f"AI PICK: {network.classify()}")
-
+    network.save_to_txt("src/saved_networks/test.txt")
+    network.load_from_txt("src/saved_networks/test.txt")
