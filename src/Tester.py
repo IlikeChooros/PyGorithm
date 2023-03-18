@@ -1,10 +1,42 @@
-import random, os
+import random, os, time
 
 from data_converter import DataConverter
 from NeuralNetwork import NeuralNetwork
 
 
+class Timer:
+    times = []
+    ptr = 0
+
+    def prev_timer(self):
+        self.ptr -= 1
+
+    def next_timer(self):
+        self.ptr += 1
+
+    def add_timer(self):
+        self.times.append(time.time())
+
+    def reset(self):
+        self.times[self.ptr] = time.time()
+
+    def del_timer(self):
+        self.times.pop(self.ptr)
+    
+    def print_delta_ms(self, append: str):
+        print(f"{append} {round((time.time() - self.times[self.ptr])*1000, 2)} ms.", end='\r')
+
+    def print_delta_s(self, append: str):
+        print(f"{append} {round((time.time() - self.times[self.ptr]), 3)} s.", end='\r')
+    
+    def print_eta(self, append: str, count: int):
+        print(f"{append} ETA: {round((time.time() - self.times[self.ptr])*count, 2)} s.", end='\r')
+
+
 class Interface:
+
+    start = 0
+    end = 0
 
     def progress_bar(self, idx, total):
         lenght = 20
@@ -21,10 +53,22 @@ class Interface:
     def loss(self, loss):
         print(f"Average Loss: {round(loss, 5)}   ", end='\r')
 
-    def average_correct(self, correct, average_correct, itr, repeat):
-        print(f"\t\t\t\t\t\t\t\t Correct: {round(correct/repeat * 100, 2)} % : ", end='\r')
-        print(f"\t\t\t\t\t\t\t\t\t\t {round(average_correct/itr * 100, 2)} %   ", end='\r')
+    def average_correct(self, correct, average_correct, itr, repeat, append: str):
+        print(f"{append}Correct: {round(correct/repeat * 100, 2)} % : ", end='\r')
+        print(f"{append}\t\t {round(average_correct/itr * 100, 2)} %   ", end='\r')
 
+    def print_eta(self, timer, delta):
+        timer.reset()
+        timer.prev_timer()
+
+        timer.print_delta_s('\t\t\t\t\t\t\t\t\t\t\t\t\t\tBatch: ')
+        timer.print_eta('\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t', delta)
+        timer.reset()
+        timer.next_timer()
+    
+    def print_sec(self, timer):
+        timer.print_delta_ms('\t\t\t\t\t\t\t\t\t\t\t  Single: ')
+        timer.reset()
 
 
 class TestCreator:
@@ -77,8 +121,8 @@ class Tester:
         self.learn_batch = []
     
     def teach(self):
-        repeat = 2
-
+        repeat = 10
+        timer = Timer()
         output = Interface()
         
         max_batch = len(self.learn_batch)*repeat
@@ -87,7 +131,14 @@ class Tester:
         correct = 0
         average_correct = 0
 
+        timer.add_timer()
+        timer.next_timer()
+
+        timer.add_timer()
+
         for i in range(repeat):
+
+
             for data in self.learn_batch:
                 itr += 1
 
@@ -102,9 +153,13 @@ class Tester:
                     self.__network.apply(1.3, repeat)
                     average_correct += correct
 
-                    output.average_correct(correct, average_correct, itr, repeat)
+                    output.average_correct(correct, average_correct, itr, repeat, '\t\t\t\t\t\t\t\t')
+                    output.print_sec(timer)
                     
                     correct = 0
+            
+            output.print_eta(timer, repeat - i)
+
                 
             
     def print_input(self, compare):
