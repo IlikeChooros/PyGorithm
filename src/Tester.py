@@ -4,81 +4,30 @@ from data_converter import DataConverter
 from NeuralNetwork import NeuralNetwork
 
 
-def progress_bar(idx, total):
-    lenght = 20
+class Interface:
 
-    done = round((idx+1)/total*lenght)
+    def progress_bar(self, idx, total):
+        lenght = 20
 
-    togo = lenght - done
+        done = round((idx+1)/total*lenght)
 
-    done_str = '#'*int(done)
-    togo_str = '-'*int(togo)
+        togo = lenght - done
 
-    print(f'\t\t\tProgress: {done_str}{togo_str} {round((idx+1)/total*100, 2)}% ', end='\r')
+        done_str = '#'*int(done)
+        togo_str = '-'*int(togo)
+
+        print(f'\t\t\tProgress: {done_str}{togo_str} {round((idx+1)/total*100, 2)}% ', end='\r')
     
+    def loss(self, loss):
+        print(f"Average Loss: {round(loss, 5)}   ", end='\r')
+
+    def average_correct(self, correct, average_correct, itr, repeat):
+        print(f"\t\t\t\t\t\t\t\t Correct: {round(correct/repeat * 100, 2)} % : ", end='\r')
+        print(f"\t\t\t\t\t\t\t\t\t\t {round(average_correct/itr * 100, 2)} %   ", end='\r')
 
 
 
-class Tester:
-    def __init__(self, network: NeuralNetwork) -> None:
-        self.__network = network
-        self.learn_batch = []
-    
-    def teach(self):
-        global progress_bar
-        repeat = 100
-        max_batch = len(self.learn_batch)*repeat
-        itr = 0
-
-        for i in range(repeat):
-            for data in self.learn_batch:
-                itr += 1
-
-                self.__network.learn(data)
-                print(f"Average Loss: {round(self.__network.loss(itr), 5)}   ", end='\r')
-
-                if itr % repeat == 0:
-                    progress_bar(itr, max_batch)
-                    self.__network.apply(1.3, repeat)
-                
-                
-            
-    def print_input(self, compare):
-
-        try:
-            x = float(input("Set x: "))
-            y = float(input("Set y: "))
-
-            self.__network.inputs = [x, y]
-
-            self.__network.network_output()
-            
-            print(f"Network: {(self.__network.output[:])} should be {compare(x,y)}")
-
-        except KeyboardInterrupt:
-            print("\nExiting the program...")
-            os._exit(0)
-
-
-    
-    def check(self, comparsion_func):
-
-        print("\n")
-
-        self.print_input(comparsion_func)
-    
-        while True:
-            self.print_input(comparsion_func)
-
-
-    def save_network(self, path):
-        self.__network.save_to_txt(path)
-    
-
-    def load_network(self, path):
-        self.__network.load_from_txt(path)
-
-
+class TestCreator:
     # Creates test, by making random points, setting output values via comparsion function (lambda)
     # Network should have 2 inputs and 2 outputs
     def create_point_test(self, path: str, comparsion_function):
@@ -120,6 +69,80 @@ class Tester:
 
                 file.write(string)
 
+    
+
+class Tester:
+    def __init__(self, network: NeuralNetwork) -> None:
+        self.__network = network
+        self.learn_batch = []
+    
+    def teach(self):
+        repeat = 2
+
+        output = Interface()
+        
+        max_batch = len(self.learn_batch)*repeat
+        itr = 0
+
+        correct = 0
+        average_correct = 0
+
+        for i in range(repeat):
+            for data in self.learn_batch:
+                itr += 1
+
+                self.__network.learn(data)
+                output.loss(self.__network.loss(itr))
+
+                if self.__network.is_correct:
+                    correct += 1
+
+                if itr % repeat == 0:
+                    output.progress_bar(itr, max_batch)
+                    self.__network.apply(1.3, repeat)
+                    average_correct += correct
+
+                    output.average_correct(correct, average_correct, itr, repeat)
+                    
+                    correct = 0
+                
+            
+    def print_input(self, compare):
+
+        try:
+            x = float(input("Set x: "))
+            y = float(input("Set y: "))
+
+            self.__network.inputs = [x, y]
+
+            self.__network.network_output()
+            
+            print(f"Network: {(self.__network.output[:])} should be {compare(x,y)}")
+
+        except KeyboardInterrupt:
+            print("\nExiting the program...")
+            os._exit(0)
+
+
+    
+    def check(self, comparsion_func):
+
+        print("\n")
+
+        self.print_input(comparsion_func)
+    
+        while True:
+            self.print_input(comparsion_func)
+
+
+    def save_network(self, path):
+        self.__network.save_to_txt(path)
+    
+
+    def load_network(self, path):
+        self.__network.load_from_txt(path)
+
+
 
         
 
@@ -127,13 +150,14 @@ class Tester:
 if __name__ == "__main__":
 
     data = DataConverter()
+    test_creator = TestCreator()
     
     tester = Tester(NeuralNetwork([2,15,15,2]))
     tester.load_network("src/saved_networks/net.txt")
 
     comparsion_func = lambda x,y: (x-2.5)*(x-2.5) < 1 - (y-2.5)*(y-2.5)
 
-    tester.create_point_test("src/tests/point_test.txt", comparsion_func)
+    test_creator.create_point_test("src/tests/point_test.txt", comparsion_func)
     tester.learn_batch = data.list_to_Data(data.prepare_data_txt("src/tests/point_test.txt"), 2, 2)
     tester.teach()
     tester.save_network("src/saved_networks/net.txt")

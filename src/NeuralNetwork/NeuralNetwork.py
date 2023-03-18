@@ -51,6 +51,8 @@ class NeuralNetwork:
 
         self.__neural_net_sturct = neurons_in_layers
 
+        self.is_correct = False
+
         self.__layers = []
         self.__layers += [Layer(neurons, inputs) for (neurons, inputs) in zip(hidden_layers, input_layers)]
 
@@ -76,6 +78,8 @@ class NeuralNetwork:
 
         self.current_loss = self.cost(data.expect)
         self.__average_loss += self.current_loss
+
+        self.is_correct = data.expect[self.classify()] == 1
 
         for reverse in range(self.__number_of_layers-2, -1, -1):
             prev_layer = self.__layers[reverse].calculate_gradient(prev_layer, output_values)
@@ -106,7 +110,8 @@ class NeuralNetwork:
 
     
     def classify(self):
-        return self.output.index(max(self.output)) + 1
+        return self.output.index(max(self.output))
+    
     
     def __str__(self):
         ret = "\n"
