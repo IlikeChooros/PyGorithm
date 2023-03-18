@@ -1,2 +1,2 @@
-from .Tester import Tester
-from .data_converter import DataConverter
+from Tester import Tester, Interface, TestCreator
+from data_converter import DataConverter

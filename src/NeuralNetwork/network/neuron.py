@@ -5,13 +5,17 @@ class Neuron:
     def __init__(self, input_connections: int):
         
         self.weights = []
+        self.__gradient_weights = []
 
         # values between (-1,1)
-        self.__bias = 1 - 2*random.random()
-        self.weights += [1 - 2*random.random() for i in range(input_connections)]
+        self.bias = 1 - 2*random.random()
+
+        for i in range(input_connections):
+
+            self.weights.append(1 - 2*random.random())
+            self.__gradient_weights.append(float(0))
 
         self.__gradient_bias = float(0)
-        self.__gradient_weights = [float(0) for i in range(input_connections)]
 
         self.__connections = input_connections
         self.__activation = float(0)
@@ -23,7 +27,7 @@ class Neuron:
 
     
     def __str__(self) -> str:
-        ret = f"Bias: {self.__bias}\n"
+        ret = f"Bias: {self.bias}\n"
         for i in range(self.__connections):
             ret += f"   {i}. Weight: {self.weights[i]} \n"
 
@@ -34,7 +38,9 @@ class Neuron:
     def activation(self) -> float: 
         output = float(0)
         for i in range(self.__connections):
-            output += self.weights[i] * self.input[i] + self.__bias
+            output += self.weights[i] * self.input[i] 
+        
+        output += + self.bias
 
         # Using sigmoid function 1 / (e^-x + 1)
         self.__activation = 1 / (math.exp(-output) + 1)
@@ -57,29 +63,34 @@ class Neuron:
         self.__output_const = 2 * (expected_value - self.__activation) * self.__activation * (1 - self.__activation)
 
         for i in range(self.__connections):
-            self.__gradient_weights[i] = self.__output_const * self.input[i]
+            self.__gradient_weights[i] += self.__output_const * self.input[i]
+        
+        self.__gradient_bias += self.__output_const
         
         return self.__output_const
     
 
-    def apply_gradient(self, learn_rate: float) -> None:
-        self.__bias += self.__gradient_bias * learn_rate
+    def apply_gradient(self, learn_rate: float, batch_size: int) -> None:
+
+        self.bias += self.__gradient_bias / batch_size * learn_rate
+
+        self.__gradient_bias = 0.0
+
         for i in range(self.__connections):
+            self.__gradient_weights[i] /= batch_size
             self.weights[i] += self.__gradient_weights[i] * learn_rate
+            self.__gradient_weights[i] = 0.0
 
     
     # Using backpropagation
     def calculate_gradient(self, node_value):
 
-        # For hidden layers
-        # dc/dw(i) = output_const * Sum(w(i+1) * output_value(i+1)) * Ai * (1 - Ai) * input 
-        # dc/db(i) = output_const * Sum(w(i+1) * output_value(i+1)) * Ai * (1- Ai)
-        self.__output_const = self.__activation * (1 - self.__activation)
+        self.__output_const = self.__activation * (1 - self.__activation) * node_value
 
-        self.__gradient_bias = node_value * self.__output_const
+        self.__gradient_bias += self.__output_const
 
         for i in range(self.__connections):
-            self.__gradient_weights[i] = node_value * self.__output_const * self.input[i]
+            self.__gradient_weights[i] += self.__output_const * self.input[i]
         
         return self.__output_const
 
@@ -97,7 +108,7 @@ if __name__ == "__main__":
     print(neuron.error(1))
     print("")
     neuron.calculate_output_gradient(1)
-    neuron.apply_gradient(1)
+    neuron.apply_gradient(1,1)
     neuron.activation()
     print(neuron)
     print(neuron.error(1))

@@ -14,7 +14,7 @@ class DataConverter:
         
         return training_inputs
 
-    def list_to_Data(self, data: list, inputs, outputs):
+    def list_to_Data(self, data: list, inputs: int, outputs: int):
         
         ret = []
         for list in data:
