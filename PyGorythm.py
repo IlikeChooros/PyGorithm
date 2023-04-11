@@ -1,6 +1,10 @@
 import pygame as pg,sys,math,random,os
 from pygame.locals import *
 #from src import Tester
+from data_converter import DataConverter
+
+#data = DataConverter.prepare_data_txt("test_data.txt")
+#print(data)
 
 klik = pg.key.get_pressed
 
@@ -27,7 +31,7 @@ colorSUBTITLES = (255, 255, 255)
 background_color = (0,0,0)
 #Colors
 colors_of_points = {0:(255,175,68),1:(0,230,200)}
-color_graph = (255, 255, 204)
+color_graph = (255,255,255)#(255, 245, 230)
 color_ai = (0,0,0)
 
 #Fonts
@@ -58,18 +62,33 @@ def ViewGraph(surface_rect,color_of_surface,list_of_points,radius_of_points,colo
             #Bliting the points
             pg.draw.circle(screen,colors_of_points[list_of_points[i][2]],
                 (int(list_of_points[i][0]),int(list_of_points[i][1])),points_radius)
-def ViewAINeurons(surface_rect,color_of_surface,list_of_inputs,list_of_neurons,lsit_of_outputs,radius_of_neuron):
+def ViewAINeurons(surface_rect,color_of_surface,list_of_inputs,list_of_neurons,list_of_outputs,radius_of_neuron):
+    neurons_pos =[]
     pg.draw.rect(screen,color_of_surface,surface_rect)
-    for i in range(1+len(list_of_neurons)+1):#inputs line + neurons lines + outputs line
+    for i in range(1+len(list_of_neurons)+1):#inputs line + neurons line(s) + outputs line
         if i == 0:
+            neurons_pos.append([])
             for j in range(len(list_of_inputs)):
-                pg.draw.circle(screen,(255,255,255),((surface_rect.width/(1+len(list_of_neurons)+1))*i+surface_rect.width/(1+len(list_of_neurons)+1),(surface_rect.height/len(list_of_inputs))*j+surface_rect.height/len(list_of_inputs)),radius_of_neuron)
+                neurons_pos[i].append([(surface_rect.width/(1+len(list_of_neurons)+1))*i+surface_rect.width/(1+len(list_of_neurons)+1)/2+surface_rect.x,(surface_rect.height/len(list_of_inputs))*j+surface_rect.height/len(list_of_inputs)/2+surface_rect.y])
         elif i > len(list_of_neurons):
-            for j in range(len(lsit_of_outputs)):
-                pg.draw.circle(screen,(255,255,255),((surface_rect.width/(1+len(list_of_neurons)+1))*i+surface_rect.width/(1+len(list_of_neurons)+1),(surface_rect.height/len(list_of_inputs))*j+surface_rect.height/len(lsit_of_outputs)),radius_of_neuron)
+            neurons_pos.append([])
+            for j in range(len(list_of_outputs)):
+                neurons_pos[i].append([(surface_rect.width/(1+len(list_of_neurons)+1))*i+surface_rect.width/(1+len(list_of_neurons)+1)/2+surface_rect.x,(surface_rect.height/len(list_of_outputs))*j+surface_rect.height/len(list_of_outputs)/2+surface_rect.y])
         else:
-            for j in range(len(list_of_neurons)):
-                pg.draw.circle(screen,(255,255,255),((surface_rect.width/(1+len(list_of_neurons)+1))*i+surface_rect.width/(1+len(list_of_neurons)+1),(surface_rect.height/len(list_of_inputs))*j+surface_rect.height/len(list_of_neurons[i-1])),radius_of_neuron)
+            neurons_pos.append([])
+            for j in range(len(list_of_neurons[i-1])):
+                neurons_pos[i].append([(surface_rect.width/(1+len(list_of_neurons)+1))*i+surface_rect.width/(1+len(list_of_neurons)+1)/2+surface_rect.x,(surface_rect.height/len(list_of_neurons[i-1]))*j+surface_rect.height/len(list_of_neurons[i-1])/2+surface_rect.y])
+    #Drawind neurons
+    for i in range(len(neurons_pos)):
+        for j in range(len(neurons_pos[i])):
+            pg.draw.circle(screen,(255,255,255),
+                    (int(neurons_pos[i][j][0]),int(neurons_pos[i][j][1])),neurons_radius)
+    #Drawind lines between neurons
+    line_width = int(radius_of_neuron/10)
+    for column in range(len(neurons_pos)-1):
+        for row in range(len(neurons_pos[column])):
+            for row_drawed_to in range(len(neurons_pos[column+1])):
+                pg.draw.line(screen,(255,255,255),(neurons_pos[column][row][0],neurons_pos[column][row][1]),(neurons_pos[column+1][row_drawed_to][0],neurons_pos[column+1][row_drawed_to][1]),line_width)
 
 
 while True:
@@ -107,6 +126,6 @@ while True:
     ViewAINeurons(ai_surface,color_ai,inputs,neurons,outputs,neurons_radius)
     #-----------CODE------------#
     #---------------------------#
-    screen.blit(font.render(f"{colors_of_points[0]}", True, (0,0,0)), (40,40))
+    screen.blit(font.render(f"", True, (0,0,0)), (40,40))
     pg.display.update()
     clock.tick(120)
