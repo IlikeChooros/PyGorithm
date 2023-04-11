@@ -59,17 +59,33 @@ def ViewGraph(surface_rect,color_of_surface,list_of_points,radius_of_points,colo
             pg.draw.circle(screen,colors_of_points[list_of_points[i][2]],
                 (int(list_of_points[i][0]),int(list_of_points[i][1])),points_radius)
 def ViewAINeurons(surface_rect,color_of_surface,list_of_inputs,list_of_neurons,list_of_outputs,radius_of_neuron):
+    neurons_pos =[]
     pg.draw.rect(screen,color_of_surface,surface_rect)
     for i in range(1+len(list_of_neurons)+1):#inputs line + neurons line(s) + outputs line
         if i == 0:
+            neurons_pos.append([])
             for j in range(len(list_of_inputs)):
-                pg.draw.circle(screen,(255,255,255),((surface_rect.width/(1+len(list_of_neurons)+1))*i+surface_rect.width/(1+len(list_of_neurons)+1)/2+surface_rect.x,(surface_rect.height/len(list_of_inputs))*j+surface_rect.height/len(list_of_inputs)/2+surface_rect.y),radius_of_neuron)
+                neurons_pos[i].append([(surface_rect.width/(1+len(list_of_neurons)+1))*i+surface_rect.width/(1+len(list_of_neurons)+1)/2+surface_rect.x,(surface_rect.height/len(list_of_inputs))*j+surface_rect.height/len(list_of_inputs)/2+surface_rect.y])
         elif i > len(list_of_neurons):
+            neurons_pos.append([])
             for j in range(len(list_of_outputs)):
-                pg.draw.circle(screen,(255,255,255),((surface_rect.width/(1+len(list_of_neurons)+1))*i+surface_rect.width/(1+len(list_of_neurons)+1)/2+surface_rect.x,(surface_rect.height/len(list_of_outputs))*j+surface_rect.height/len(list_of_outputs)/2+surface_rect.y),radius_of_neuron)
+                neurons_pos[i].append([(surface_rect.width/(1+len(list_of_neurons)+1))*i+surface_rect.width/(1+len(list_of_neurons)+1)/2+surface_rect.x,(surface_rect.height/len(list_of_outputs))*j+surface_rect.height/len(list_of_outputs)/2+surface_rect.y])
         else:
+            neurons_pos.append([])
             for j in range(len(list_of_neurons[i-1])):
-                pg.draw.circle(screen,(255,255,255),((surface_rect.width/(1+len(list_of_neurons)+1))*i+surface_rect.width/(1+len(list_of_neurons)+1)/2+surface_rect.x,(surface_rect.height/len(list_of_neurons[i-1]))*j+surface_rect.height/len(list_of_neurons[i-1])/2+surface_rect.y),radius_of_neuron)
+                neurons_pos[i].append([(surface_rect.width/(1+len(list_of_neurons)+1))*i+surface_rect.width/(1+len(list_of_neurons)+1)/2+surface_rect.x,(surface_rect.height/len(list_of_neurons[i-1]))*j+surface_rect.height/len(list_of_neurons[i-1])/2+surface_rect.y])
+    print(neurons_pos)
+    #Drawind neurons
+    for i in range(len(neurons_pos)):
+        for j in range(len(neurons_pos[i])):
+            pg.draw.circle(screen,(255,255,255),
+                    (int(neurons_pos[i][j][0]),int(neurons_pos[i][j][1])),neurons_radius)
+    #Drawind lines between neurons
+    line_width = int(radius_of_neuron/10)
+    for column in range(len(neurons_pos)-1):
+        for row in range(len(neurons_pos[column])):
+            for row_drawed_to in range(len(neurons_pos[column+1])):
+                pg.draw.line(screen,(255,255,255),(neurons_pos[column][row][0],neurons_pos[column][row][1]),(neurons_pos[column+1][row_drawed_to][0],neurons_pos[column+1][row_drawed_to][1]),line_width)
 
 
 while True:
