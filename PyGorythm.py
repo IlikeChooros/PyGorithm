@@ -2,6 +2,8 @@ import pygame as pg,sys,math,random,os
 from pygame.locals import *
 #from src import Tester
 from data_converter import DataConverter
+import 
+#Creating AI
 
 #data = DataConverter.prepare_data_txt("test_data.txt")
 #print(data)
@@ -30,9 +32,9 @@ colorSUBTITLES = (255, 255, 255)
 #Background pygame color
 background_color = (0,0,0)
 #Colors
-colors_of_points = {0:(255,175,68),1:(0,230,200)}
+colors_of_points = {0:(0, 102, 255),1:(255, 102, 0)}
 color_graph = (255,255,255)#(255, 245, 230)
-color_ai = (0,0,0)
+color_ai = (0,0,20)
 
 #Fonts
 font = pg.font.SysFont("cambria",30)
