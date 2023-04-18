@@ -1,12 +1,6 @@
 import pygame as pg,sys,math,random,os
 from pygame.locals import *
 #from src import Tester
-from data_converter import DataConverter
-import 
-#Creating AI
-
-#data = DataConverter.prepare_data_txt("test_data.txt")
-#print(data)
 
 klik = pg.key.get_pressed
 
@@ -32,9 +26,9 @@ colorSUBTITLES = (255, 255, 255)
 #Background pygame color
 background_color = (0,0,0)
 #Colors
-colors_of_points = {0:(0, 102, 255),1:(255, 102, 0)}
-color_graph = (255,255,255)#(255, 245, 230)
-color_ai = (0,0,20)
+colors_of_points = {0:(255,175,68),1:(0,230,200)}
+color_graph = (255, 255, 204)
+color_ai = (90,50,70)
 
 #Fonts
 font = pg.font.SysFont("cambria",30)
@@ -80,6 +74,7 @@ def ViewAINeurons(surface_rect,color_of_surface,list_of_inputs,list_of_neurons,l
             neurons_pos.append([])
             for j in range(len(list_of_neurons[i-1])):
                 neurons_pos[i].append([(surface_rect.width/(1+len(list_of_neurons)+1))*i+surface_rect.width/(1+len(list_of_neurons)+1)/2+surface_rect.x,(surface_rect.height/len(list_of_neurons[i-1]))*j+surface_rect.height/len(list_of_neurons[i-1])/2+surface_rect.y])
+    print(neurons_pos)
     #Drawind neurons
     for i in range(len(neurons_pos)):
         for j in range(len(neurons_pos[i])):
@@ -128,6 +123,6 @@ while True:
     ViewAINeurons(ai_surface,color_ai,inputs,neurons,outputs,neurons_radius)
     #-----------CODE------------#
     #---------------------------#
-    screen.blit(font.render(f"", True, (0,0,0)), (40,40))
+    screen.blit(font.render(f"{colors_of_points[0]}", True, (0,0,0)), (40,40))
     pg.display.update()
     clock.tick(120)
