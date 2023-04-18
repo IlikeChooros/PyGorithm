@@ -2,6 +2,9 @@ import pygame as pg,sys,math,random,os
 from pygame.locals import *
 #from src import Tester
 from data_converter import DataConverter
+from src import NeuralNetwork
+
+neural = NeuralNetwork([2,3,2])
 
 #data = DataConverter.prepare_data_txt("test_data.txt")
 #print(data)
