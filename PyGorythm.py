@@ -1,13 +1,19 @@
 import pygame as pg,sys,math,random,os
 from pygame.locals import *
 #from src import Tester
-from data_converter import DataConverter
-from src import NeuralNetwork
-
-neural = NeuralNetwork([2,3,2])
+from src import NeuralNetwork, DataConverter
 
 #data = DataConverter.prepare_data_txt("test_data.txt")
 #print(data)
+
+"""
+
+By dostać output: network.output 
+By dostać input: network.inputs
+By dostać bias z każdego neurona: network.get_neuron_biases()
+
+
+"""
 
 klik = pg.key.get_pressed
 

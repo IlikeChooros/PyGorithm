@@ -1,4 +1,4 @@
-from .network import Layer
+from network import Layer
 
 
 """
@@ -174,11 +174,21 @@ class NeuralNetwork:
                 for connection in range(int(network[0][layer])):
                     self.__layers[layer].neurons[neuron_idx].weights[connection] = network[idx][connection+1]
 
+    def get_neuron_biases(self):
+        biases = []
+        hidden_layers = self.__layers[:-1]
+
+        for layer in hidden_layers:
+            biases.append([neuron.bias for neuron in layer.neurons])
+        return biases
+
         
         
 
 
 if __name__ == "__main__":
     network = NeuralNetwork([2,10,3,2])
-    network.save_to_txt("src/saved_networks/test.txt")
-    network.load_from_txt("src/saved_networks/test.txt")
+    network.learn(Data([1,2], [1,0]))
+    print(network.get_neuron_biases()[:])
+    print(network.inputs[:])
+    print(network.output[:])
