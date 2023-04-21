@@ -1,2 +1,2 @@
-from Tester import Tester, Interface, TestCreator
-from data_converter import DataConverter
+from .NeuralNetwork import NeuralNetwork
+from .data_converter import DataConverter

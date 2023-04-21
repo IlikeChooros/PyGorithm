@@ -79,10 +79,10 @@ class TestCreator:
 
         with open(path, 'w') as file:
 
-            for i in range(1000):
+            for i in range(250):
                 
-                x = random.random()*5
-                y = random.random()*5
+                x = random.random()*700
+                y = random.random()*400
 
 
                 string = str(x) + " " + str(y)
@@ -95,23 +95,6 @@ class TestCreator:
                 file.write(string)
             
             # Now create points to improve accuracy
-
-            for i in range(500):
-                x = random.random()*5
-                
-                if i%2 == 0:
-                    y = x + 0.001
-                else:
-                    y = x - 0.001
-                
-                string = str(x) + " " + str(y)
-                if comparsion_function(x,y):
-                    string += " 1 0\n"
-
-                else:
-                    string += " 0 1\n"
-
-                file.write(string)
 
     
 
@@ -208,13 +191,13 @@ if __name__ == "__main__":
     test_creator = TestCreator()
     
     tester = Tester(NeuralNetwork([2,15,15,2]))
-    tester.load_network("src/saved_networks/net.txt")
+    #tester.load_network("src/saved_networks/net.txt")
 
-    comparsion_func = lambda x,y: (x-2.5)*(x-2.5) < 1 - (y-2.5)*(y-2.5)
+    comparsion_func = lambda x,y: x > y
 
     test_creator.create_point_test("src/tests/point_test.txt", comparsion_func)
     tester.learn_batch = data.list_to_Data(data.prepare_data_txt("src/tests/point_test.txt"), 2, 2)
     tester.teach()
-    tester.save_network("src/saved_networks/net.txt")
-    tester.check(comparsion_func) 
+    #tester.save_network("src/saved_networks/net.txt")
+    #tester.check(comparsion_func) 
     
