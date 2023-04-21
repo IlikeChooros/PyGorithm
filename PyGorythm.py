@@ -1,12 +1,17 @@
 import pygame as pg,sys,math,random,os
 from pygame.locals import *
-#from src import Tester
-from data_converter import DataConverter
-import 
+from src import DataConverter
+from src import NeuralNetwork
 #Creating AI
+inputs = [12,12]
+neurons = [[12,12,3],[4,1,1.4,3.1]]
+outputs = [0,1]
+AI = NeuralNetwork([len(inputs),len(neurons),len(outputs)])
 
-#data = DataConverter.prepare_data_txt("test_data.txt")
-#print(data)
+#Wczytanie danych
+data_converter = DataConverter()
+data = data_converter.prepare_data_txt("src//tests//point_test.txt")
+print(data)
 
 klik = pg.key.get_pressed
 
@@ -41,18 +46,17 @@ font = pg.font.SysFont("cambria",30)
 
 #---------
 graph_surface = pg.Rect(0,0,OKNO[0],OKNO[1]/2)
-points_radius = 10
+points_radius = 8
 
 points_data = []
 points_data = [[200,200,1],[150,250,1],[300,250,1],[400,140,0],[250,300,0]]
+points_data = data
 
 ai_surface = pg.Rect(0,OKNO[1]/2,OKNO[0],OKNO[1]/2)
 neurons_radius = 30
 
 
-inputs = [12,12]
-neurons = [[12,12,3],[4,1,1.4,3.1]]
-outputs = [0,1]
+
 
 
 #Defs
@@ -127,6 +131,7 @@ while True:
     ViewGraph(graph_surface,color_graph,points_data,points_radius,colors_of_points)
     ViewAINeurons(ai_surface,color_ai,inputs,neurons,outputs,neurons_radius)
     #-----------CODE------------#
+    #AI.learn()
     #---------------------------#
     screen.blit(font.render(f"", True, (0,0,0)), (40,40))
     pg.display.update()

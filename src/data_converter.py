@@ -1,4 +1,4 @@
-from NeuralNetwork import Data
+from .NeuralNetwork import Data
 
 class DataConverter:
     def prepare_data_txt(self, path: str):
