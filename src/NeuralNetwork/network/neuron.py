@@ -1,5 +1,6 @@
 import random
 import math
+import numpy
 
 class Neuron:
     def __init__(self, input_connections: int):
@@ -43,7 +44,7 @@ class Neuron:
         output += + self.bias
 
         # Using sigmoid function 1 / (e^-x + 1)
-        self.__activation = 1 / (math.exp(-output) + 1)
+        self.__activation = 1 / (numpy.exp(-output) + 1)
 
         return self.__activation
     
