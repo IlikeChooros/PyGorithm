@@ -1,12 +1,21 @@
 import pygame as pg,sys,math,random,os
 from pygame.locals import *
 #from src import Tester
-from data_converter import DataConverter
-import 
-#Creating AI
+from src import NeuralNetwork, DataConverter
 
 #data = DataConverter.prepare_data_txt("test_data.txt")
 #print(data)
+
+AI = NeuralNetwork([2,3,2])
+
+"""
+
+By dostać output: network.output 
+By dostać input: network.inputs
+By dostać bias z każdego neurona: network.get_neuron_biases()
+
+
+"""
 
 klik = pg.key.get_pressed
 
@@ -50,9 +59,11 @@ ai_surface = pg.Rect(0,OKNO[1]/2,OKNO[0],OKNO[1]/2)
 neurons_radius = 30
 
 
-inputs = [12,12]
-neurons = [[12,12,3],[4,1,1.4,3.1]]
-outputs = [0,1]
+inputs = [0,0]
+#neurons = [[12,12,3]]
+neurons = AI.get_neuron_biases()
+print(neurons)
+outputs = [0,0]
 
 
 #Defs
@@ -80,12 +91,21 @@ def ViewAINeurons(surface_rect,color_of_surface,list_of_inputs,list_of_neurons,l
             neurons_pos.append([])
             for j in range(len(list_of_neurons[i-1])):
                 neurons_pos[i].append([(surface_rect.width/(1+len(list_of_neurons)+1))*i+surface_rect.width/(1+len(list_of_neurons)+1)/2+surface_rect.x,(surface_rect.height/len(list_of_neurons[i-1]))*j+surface_rect.height/len(list_of_neurons[i-1])/2+surface_rect.y])
-    #Drawind neurons
+    #Drawing neurons
     for i in range(len(neurons_pos)):
         for j in range(len(neurons_pos[i])):
+            bias_color = (255,255,255)
+            b = 0.2
+            if b>0:
+                b = int(b*(235+20))
+                if b > 255:
+                    b = 255
+                bias_color = (0,b,0)
+            else:
+                pass
             pg.draw.circle(screen,(255,255,255),
                     (int(neurons_pos[i][j][0]),int(neurons_pos[i][j][1])),neurons_radius)
-    #Drawind lines between neurons
+    #Drawing lines between neurons
     line_width = int(radius_of_neuron/10)
     for column in range(len(neurons_pos)-1):
         for row in range(len(neurons_pos[column])):
